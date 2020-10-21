@@ -16,6 +16,12 @@ const Header = () => {
 					<Link style={{ textDecoration: 'none' }} to="/dashboard">
 						<Nav.Link href="#home">Dashboard</Nav.Link>
 					</Link>
+					<Link style={{ textDecoration: 'none' }} to="/login">
+						<Nav.Link href="#home">Login</Nav.Link>
+					</Link>
+					<Link style={{ textDecoration: 'none' }} to="/signup">
+						<Nav.Link href="#home">Signup</Nav.Link>
+					</Link>
 					
 				</Nav>
 				{/* <Form inline>
