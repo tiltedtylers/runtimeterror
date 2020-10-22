@@ -6,5 +6,6 @@ cursor = connection.cursor()
 
 cursor.execute("SELECT * FROM db_grad_cs_1917.deal")
 
-print("done")
+for deal in cursor:
+    print(deal)
 
