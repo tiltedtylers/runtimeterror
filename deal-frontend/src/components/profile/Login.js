@@ -3,18 +3,18 @@ import { Button, FormGroup, FormControl, FormLabel, Form, Modal } from "react-bo
 import "./login.css";
 
 export default function Login(props) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [dbConnection, setDBConnection] = useState("text-danger");
 
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return username.length > 0 && password.length > 0;
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(email, password);
+    console.log(username, password);
   }
 
   const [show, setShow] = useState(true);
@@ -32,13 +32,13 @@ export default function Login(props) {
         <Modal.Body>
         <p>The premier source of all deal information.</p>
           <form onSubmit={handleSubmit}>
-            <FormGroup controlId="email">
-              <FormLabel>Email</FormLabel>
+            <FormGroup controlId="username">
+              <FormLabel>username</FormLabel>
               <FormControl
                 autoFocus
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
               />
             </FormGroup>
             <FormGroup controlId="password">

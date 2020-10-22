@@ -1,31 +1,35 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel, Form } from "react-bootstrap";
 import "./login.css";
+import axios from 'axios'
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   function validateForm() {
-    return email.length > 0 && password.length > 0;
+    return username.length > 0 && password.length > 0;
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(email, password);
+    console.log(username, password);
+    axios.post(`http://localhost:8090/signup?username=${username}&password=${password}`).then(res => {
+      console.log(res.data)
+    })
   }
 
   return (
     <div className="main">
         <h1>Signup</h1>
       <form onSubmit={handleSubmit}>
-        <FormGroup controlId="email">
-          <FormLabel>Email</FormLabel>
+        <FormGroup controlId="username">
+          <FormLabel>username</FormLabel>
           <FormControl
             autoFocus
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
+            type="username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
           />
         </FormGroup>
         <FormGroup controlId="password">
