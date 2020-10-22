@@ -1,12 +1,14 @@
 import React from 'react'
 import { Table } from 'react-bootstrap';
+import Login from '../profile/Login';
 
-const Dashboard = () => {
+const Dashboard = ({ setAuth }) => {
     return (
         <div>
-            <Table>
+            <Login setAuth={setAuth}></Login>
+            {<Table>
 
-            </Table>
+            </Table>}
         </div>
     )
 }

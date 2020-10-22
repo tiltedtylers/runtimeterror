@@ -22,9 +22,9 @@ export default function Signup() {
   return (
     <div className="main">
         <h1>Signup</h1>
-      <form onSubmit={handleSubmit}>
-        <FormGroup controlId="username">
-          <FormLabel>username</FormLabel>
+      <Form onSubmit={handleSubmit}>
+        <FormGroup controlId="email">
+          <FormLabel>Email</FormLabel>
           <FormControl
             autoFocus
             type="username"
@@ -43,7 +43,7 @@ export default function Signup() {
         <Button block disabled={!validateForm()} type="submit">
           Signup
         </Button>
-      </form>
+      </Form>
     </div>
   );
 }
