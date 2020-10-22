@@ -14,6 +14,7 @@ Front-end is setup using ReactJS. Here are some additional npm modules used:
 * react-router-dom
 * react-bootstrap
 * axios
+* react-router-bootstrap
 
 ### Installation
 ```

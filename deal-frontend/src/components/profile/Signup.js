@@ -18,7 +18,7 @@ export default function Signup() {
   return (
     <div className="main">
         <h1>Signup</h1>
-      <form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit}>
         <FormGroup controlId="email">
           <FormLabel>Email</FormLabel>
           <FormControl
@@ -39,7 +39,7 @@ export default function Signup() {
         <Button block disabled={!validateForm()} type="submit">
           Signup
         </Button>
-      </form>
+      </Form>
     </div>
   );
 }

@@ -1,21 +1,22 @@
 import React from 'react'
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 
 const Header = () => {
     return (
 			<Navbar bg="primary" variant="dark">
-				<Link to="/">
-					<Navbar.Brand href="#home">RuntimeTerror</Navbar.Brand>
-				</Link>
+				<LinkContainer to="/">
+					<Navbar.Brand>RuntimeTerror</Navbar.Brand>
+				</LinkContainer> 
 				
 				<Nav className="mr-auto">
-					<Link style={{ textDecoration: 'none' }} to="/">
+					{/* <Link style={{ textDecoration: 'none' }} to="/">
 						<Nav.Link href="#home">Home</Nav.Link>
-					</Link>
-					<Link style={{ textDecoration: 'none' }} to="/dashboard">
-						<Nav.Link href="#home">Dashboard</Nav.Link>
-					</Link>
+					</Link> */}
+					{/* <LinkContainer style={{ textDecoration: 'none' }} to="/dashboard"> */}
+						<Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
+					{/* </LinkContainer> */}
 					{/* <Link style={{ textDecoration: 'none' }} to="/login">
 						<Nav.Link href="#home">Login</Nav.Link>
 					</Link>
