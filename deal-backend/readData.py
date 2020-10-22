@@ -61,7 +61,12 @@ def insert_query(dict):
     quantity = dict["quantity"]
 
     sql_insert = "Insert into db_grad_cs_1917.deal " \
-                 "VALUES(" + id + ", '" + time + "', " + str(counterparty) + ", " + str(instrument) + ", " + deal_type + ", " + str(round(amount, 2)) + ", " + str(quantity) +")"
+                 "VALUES(" + id + ", '" + time + "', " + str(counterparty) + ", " + str(instrument) + ", '" + deal_type + "', " + str(round(amount, 2)) + ", " + str(quantity) +")"
     print(sql_insert)
+    cursor.execute(sql_insert)
 
 insert_query(mystr)
+
+connection.commit()
+cursor.close()
+connection.close()
