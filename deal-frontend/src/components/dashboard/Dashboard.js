@@ -1,11 +1,11 @@
 import React from 'react'
 import { Table } from 'react-bootstrap';
-import Login from '../profile/Login';
+// import Login from '../profile/Login';
 
-const Dashboard = ({ setAuth }) => {
+const Dashboard = () => {
     return (
         <div>
-            <Login setAuth={setAuth}></Login>
+            
             {<Table>
 
             </Table>}
