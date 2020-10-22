@@ -40,9 +40,9 @@ const Login= ({ loginSetAuth }) => {
               <FormLabel>Email</FormLabel>
               <FormControl
                 autoFocus
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
               />
             </FormGroup>
             <FormGroup controlId="password">
