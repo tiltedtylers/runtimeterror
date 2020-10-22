@@ -15,7 +15,7 @@ const Header = () => {
 						<Nav.Link href="#home">Home</Nav.Link>
 					</Link> */}
 					{/* <LinkContainer style={{ textDecoration: 'none' }} to="/dashboard"> */}
-						<Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
+						<Nav.Link as={Link} to="/">Dashboard</Nav.Link>
 					{/* </LinkContainer> */}
 					{/* <Link style={{ textDecoration: 'none' }} to="/login">
 						<Nav.Link href="#home">Login</Nav.Link>

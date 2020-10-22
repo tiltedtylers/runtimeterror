@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel, Form, Modal } from "react-bootstrap";
 import "./login.css";
 
-const Login= ({ loginSetAuth }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [dbConnection, setDBConnection] = useState("text-danger");
 

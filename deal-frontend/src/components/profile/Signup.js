@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel, Form } from "react-bootstrap";
 import "./login.css";
-import axios from 'axios'
+import axios from 'axios';
 
 export default function Signup() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  function validateForm() {
+  const validateForm = () => {
     return username.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event) {
+  const handleSubmit= (event) => {
     event.preventDefault();
     console.log(username, password);
     axios.post(`http://localhost:8090/signup?username=${username}&password=${password}`).then(res => {
