@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel, Form, Modal } from "react-bootstrap";
 import "./login.css";
 
-export default function Login() {
+export default function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [dbConnection, setDBConnection] = useState("text-danger");
@@ -25,7 +25,7 @@ export default function Login() {
   return (
     <div>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal animation={false} backdrop="static" show={show} onHide={handleClose}>
         <Modal.Header>{/* closebutton */}
           <Modal.Title>RuntimeTerror - User Login</Modal.Title>
         </Modal.Header>
@@ -53,14 +53,13 @@ export default function Login() {
               Login
             </Button> */}
           </form>
+          {console.log(props.auth)}
 
-
-
+          <p className={dbConnection} onClick={setDBConnection}>Database succession successful</p>
         </Modal.Body>
         <Modal.Footer>
-          <p class={dbConnection} onClick={setDBConnection}>Database succession successful</p>
-          <Button variant="secondary">Log In</Button>
-          <Button variant="primary">Sign Up</Button>
+          <Button onClick={() => handleClose()} variant="secondary">Log In</Button>
+          <Button onClick={() => handleClose()} variant="primary">Sign Up</Button>
         </Modal.Footer>
       </Modal>
     </div>
