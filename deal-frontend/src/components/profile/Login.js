@@ -1,42 +1,51 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel, Form, Modal } from "react-bootstrap";
 import "./login.css";
+import axios from 'axios';
 
-const Login = () => {
-  const [email, setEmail] = useState("");
+const Login = ({loginAuth}) => {
+
+  // Holds fields sent to webtier 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
   const [dbConnection, setDBConnection] = useState("text-danger");
 
+  // Changes between signup and login form
+  const [isLogin, setIsLogin] = useState(true);
 
-  // const validateForm = () => {
-  //   return email.length > 0 && password.length > 0;
-  // }
-
+  // Called when user clicks signup or login button
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleClose();
-    // loginSetAuth();
+    let postRoute = isLogin ? "login" : "signup";
+    axios.post("http://localhost:8090/" + postRoute, {
+      username: username,
+      password: password
+    }).then(() =>{
+      handleClose();
+      loginAuth();
+    }).catch(() => {
+      alert("Login unsuccessful!");
+    })
 
-    console.log(email, password);
+    console.log(username, password);
   }
 
+  // Handles visibility of login modal
   const [show, setShow] = useState(true);
-
   const handleClose = () => setShow(false);
   // const handleShow = () => setShow(true);
 
   return (
     <div>
 
-      <Modal animation={false} backdrop="static" show={show} onHide={handleClose}>
-        <Modal.Header>{/* closebutton */}
-          <Modal.Title>RuntimeTerror - User Login</Modal.Title>
+      <Modal animation={false} backdrop="static" show={show}>
+        <Modal.Header>
+          <Modal.Title>RuntimeTerror - <span style={{cursor: "pointer"}} onClick={() => setIsLogin(!isLogin)}>{isLogin ? "User Login" : "User Signup"}</span></Modal.Title>
         </Modal.Header>
         <Form onSubmit={handleSubmit}>
         <Modal.Body>
         <p>The premier source of all deal information.</p>
-          {/* <Form onSubmit={handleSubmit}> */}
             <FormGroup controlId="email">
               <FormLabel>Email</FormLabel>
               <FormControl
@@ -54,22 +63,15 @@ const Login = () => {
                 type="password"
               />
             </FormGroup>
-            {/* <Button block disabled={!validateForm()} type="submit">
-              Login
-            </Button> */}
-            {/* <Button type="submit" variant="secondary">Log In</Button>
-            <Button onClick={() => handleClose()} variant="primary">Sign Up</Button> */}
-
-          {/* </Form> */}
 
           <p className={dbConnection} onClick={setDBConnection}>Database succession successful</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button type="submit" variant="secondary">Log In</Button>
-          <Button onClick={() => handleClose()} variant="primary">Sign Up</Button>
+          {isLogin ? <Button type="submit" variant="secondary">Login</Button> : <Button type="submit" variant="primary">Sign Up</Button>}
         </Modal.Footer>
         </Form>
       </Modal>
+
     </div>
   );
 

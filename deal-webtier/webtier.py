@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, request
 from flask_sse import sse
 from flask_cors import CORS
 import requests
@@ -7,6 +7,34 @@ import time
 app = Flask(__name__)
 #app.register_blueprint(sse, url_prefix='/stream')
 CORS(app)
+
+@app.route('/signup',methods = ['GET','POST'])
+def signup():
+    # Retrieve login information from React
+    username= request.get_json()["username"]
+    password = request.get_json()["password"]
+    
+    # User Authentication logic goes here?
+
+    print("Signup", username, password)
+
+    # Return something back to React
+    return "You're doing great!"
+
+@app.route('/login', methods = ['GET', 'POST'])
+def test_login() :
+    # Retrieve login information from React
+    username= request.get_json()["username"]
+    password = request.get_json()["password"]
+    
+    # User Authentication logic goes here?
+
+    print("Login", username, password)
+
+
+    # Return something back to React
+    return "You're doing great!"
+
 
 @app.route('/deals')
 def forwardStream():

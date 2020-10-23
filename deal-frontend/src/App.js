@@ -3,39 +3,28 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './App.css';
 import Dashboard from './components/dashboard/Dashboard';
 import Header from './components/layout/Header'
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './components/profile/Login'
-import Signup from './components/profile/Signup'
-
-
 
 const App = () => {
 
   const [auth, setAuth] = useState(false);
 
-  const loginSetAuth = () => {
-    setAuth(true);
-  }
-
-  const requireAuth = () => {
-    if (!auth) {
-      return <Login></Login>;
-    }
-    return <Dashboard></Dashboard>;
+  // passing hook down to dashboard then login component to update authentication hook here
+  const loginAuth = () => {
+    setAuth(!auth);
   }
 
   return (
     <div className="App">
       
       <Router>
-        {/* {auth ? <Header></Header> : null} */}
-        <Header></Header>
+        {auth ? <Header></Header> : null}
         <Switch>
-          <Route exact path="/" component={requireAuth}></Route>
-          {/* <Route exact path="/dashboard" component={() => requireAuth(Dashboard)} onEnter={requireAuth}></Route> */}
-          <Route exact path='/login' component={Login} onEnter={requireAuth}/>
-          <Route exact path='/signup' component={Signup} onEnter={requireAuth}/>
+          <Route exact path="/" render={(props) => (
+            <Dashboard {...props} auth={auth} loginAuth={loginAuth} />
+          )}/>
+          <Route exact path='/login' component={Login}/>
         </Switch>
       </Router>
       
