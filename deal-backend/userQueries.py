@@ -1,8 +1,41 @@
 import mysql.connector
+import pandas as pd
 
 connection = mysql.connector.connect(host='localhost', database='mysql', user='root',
                                      password='ppp', auth_plugin='mysql_native_password')
 cursor = connection.cursor()
+
+
+def realised_profit():
+    sell_df = pd.read_sql("SELECT counterparty_name, instrument_name, deal_quantity, deal_amount FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id  INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S';", con = connection)
+    buy_df = pd.read_sql("SELECT counterparty_name, instrument_name, deal_amount, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='B';", con=connection)
+    counterparties = sell_df.counterparty_name.unique()
+    instruments = sell_df.instrument_name.unique()
+    pnldict = {}
+    for counterparty in counterparties:
+        pnldict[str(counterparty)] = 0
+        for instrument in instruments:
+            temp = sell_df[sell_df['counterparty_name']==counterparty]
+            newSelldf = temp[temp['instrument_name']==instrument]
+            newSelldf['total'] = newSelldf['deal_amount'] * newSelldf['deal_quantity']
+
+            temp = buy_df[buy_df['counterparty_name']==counterparty]
+            newBuydf = temp[temp['instrument_name']==instrument]
+            newBuydf['total'] = newBuydf['deal_amount'] * newBuydf['deal_quantity']
+
+            total_sell = newSelldf['total'].sum()
+            total_buy  = newBuydf['total'].sum()
+            PnL = total_sell- total_buy
+            pnldict[str(counterparty)] += PnL
+    #ending_position = newBuydf['deal_quantity'].sum() - newSelldf['deal_quantity'].sum()
+    #print("ending position : ")
+    #print(str(counterparty) + "-" + str(instrument) + "=" + str(ending_position))
+    #print("Realized Gains: ")
+    #print(pnldict)
+    return pnldict
+
+print(realised_profit())
+
 
 
 def calculate_avg_buy_sell_price(start_date='2017-07-28T17:06:29.955', end_date='2017-07-28T17:06:30.049'):
