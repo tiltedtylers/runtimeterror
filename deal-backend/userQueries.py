@@ -95,7 +95,7 @@ def calculate_ending_position():
     cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
                    "INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id "
                    "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
-                   "WHERE deal_type='S' AND deal_time LIKE '%" + date + "%'")
+                   "WHERE deal_type='S'")
     for sale in cursor:
         counterparty = sale[0]
         instrument = sale[1]
@@ -126,7 +126,7 @@ def calculate_aggregate_ending_positions():
             aggregate_ending_position_dict[instrument] = {"quantityBought": quantity}
     cursor.execute("SELECT instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
                    "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
-                   "WHERE deal_type='S' AND deal_time LIKE '%" + date + "%'")
+                   "WHERE deal_type='S'")
     for sale in cursor:
         instrument = sale[0]
         quantity = sale[1]
