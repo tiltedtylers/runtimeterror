@@ -31,8 +31,8 @@ const App = () => {
         {/* {auth ? <Header></Header> : null} */}
         <Header></Header>
         <Switch>
-          <Route exact path="/" component={() => requireAuth(Home)} onEnter={requireAuth}></Route>
-          <Route exact path="/dashboard" component={() => requireAuth(Dashboard)} onEnter={requireAuth}></Route>
+          <Route exact path="/" component={Home} ></Route>
+          <Route exact path="/dashboard" component={Dashboard}></Route>
           <Route exact path='/login' component={Login} onEnter={requireAuth}/>
           <Route exact path='/signup' component={Signup} onEnter={requireAuth}/>
         </Switch>
