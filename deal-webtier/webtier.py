@@ -1,6 +1,7 @@
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response
 from flask_sse import sse
 from flask_cors import CORS
+from flask import request
 import requests
 import time
 
@@ -8,33 +9,24 @@ app = Flask(__name__)
 #app.register_blueprint(sse, url_prefix='/stream')
 CORS(app)
 
-@app.route('/signup',methods = ['GET','POST'])
-def signup():
-    # Retrieve login information from React
-    username= request.get_json()["username"]
+@app.route('/dbconnect')
+def dbconnect():
+    dburl = "http://localhost:8080/dbconnect"
+    r = requests.get(dburl)
+    print(r)
+    res_value = r.text
+    return res_value
+
+@app.route('/login',methods = ['GET','POST'])
+def login():
+    username = request.get_json()["username"]
     password = request.get_json()["password"]
-    
-    # User Authentication logic goes here?
-
-    print("Signup", username, password)
-
-    # Return something back to React
-    return "You're doing great!"
-
-@app.route('/login', methods = ['GET', 'POST'])
-def test_login() :
-    # Retrieve login information from React
-    username= request.get_json()["username"]
-    password = request.get_json()["password"]
-    
-    # User Authentication logic goes here?
-
-    print("Login", username, password)
-
-
-    # Return something back to React
-    return "You're doing great!"
-
+    print(username,password)
+    singupUrl = f"http://localhost:8080/login?username={username}&password={password}"
+    r = requests.get(singupUrl)
+    print(r)    
+    res_value = r.text
+    return res_value
 
 @app.route('/deals')
 def forwardStream():
@@ -53,7 +45,7 @@ def client_to_server():
 @app.route('/')
 @app.route('/index')
 def index():
-    return "webtier service points are running..."
+    return "webtier service points are asdf running..."
 
 
 def get_message():
