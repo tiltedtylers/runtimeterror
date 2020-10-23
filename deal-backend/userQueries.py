@@ -71,6 +71,7 @@ def calculate_avg_buy_sell_price(start_date='2017-07-28T17:06:29.955', end_date=
                    "WHERE deal_type='B' AND deal_time BETWEEN " + start_date + " AND " + end_date + " GROUP BY deal_instrument_id;")
     for avgBuyPrice in cursor:
         avg_sell_buy_dict[avgBuyPrice[0]]["avgBuyPrice"] = avgBuyPrice[1]
+    return avg_sell_buy_dict
 
 
 def calculate_ending_position():
@@ -107,6 +108,7 @@ def calculate_ending_position():
         else:
             ending_position_dict.get(counterparty).get(instrument)["quantitySold"] = quantity
             ending_position_dict.get(counterparty).get(instrument)["endingPosition"] = q_bought - quantity
+    return ending_position_dict
 
 
 def calculate_aggregate_ending_positions():
@@ -136,3 +138,4 @@ def calculate_aggregate_ending_positions():
         else:
             aggregate_ending_position_dict.get(instrument)["quantitySold"] = quantity
             aggregate_ending_position_dict.get(instrument)["endingPosition"] = q_bought - quantity
+    return aggregate_ending_position_dict
