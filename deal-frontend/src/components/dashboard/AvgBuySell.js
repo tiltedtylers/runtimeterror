@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
 import { Form, Button, Card } from 'react-bootstrap'
 
-const OtherData = () => {
+const AvgBuySell = () => {
 
-    const [date, setDate] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     const handleSubmit = (event) => {
         
         event.preventDefault();
 
         // Format YYYY-MM-DD
-        console.log(date);
+        console.log(startDate, endDate);
 
         // Post to something
 
@@ -21,14 +22,24 @@ const OtherData = () => {
         <div>
             <Card>
             <Card.Body>
-            <h1>Other Data</h1>
+            <h1>Average Buy/Sell Price</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Group>
-                    <Form.Label>Date</Form.Label>
+                    <Form.Label>Start Date</Form.Label>
                     <Form.Control 
                     type="date"
-                value={date}
-                onChange={e => setDate(e.target.value)}
+                value={startDate}
+                onChange={e => setStartDate(e.target.value)}
+                    >
+
+                    </Form.Control>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>End Date</Form.Label>
+                    <Form.Control 
+                    type="date"
+                value={endDate}
+                onChange={e => setEndDate(e.target.value)}
                     >
 
                     </Form.Control>
@@ -36,8 +47,8 @@ const OtherData = () => {
                 <Form.Group>
                     <Button type="submit" variant="primary">Submit</Button>
                 </Form.Group>
-                
             </Form>
+
 
 
             {/* Stuff to be displayed from form can be put here */}
@@ -49,4 +60,4 @@ const OtherData = () => {
     )
 }
 
-export default OtherData;
+export default AvgBuySell;
