@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Button, FormGroup, FormControl, FormLabel, Form } from "react-bootstrap";
+import { Button, FormGroup, FormControl, FormLabel, Form, Modal } from "react-bootstrap";
 import "./login.css";
 import axios from 'axios';
+import CheckDbConnection from '../home/CheckDBConnection'
 
 const Login = ({loginAuth}) => {
 
@@ -18,25 +19,15 @@ const Login = ({loginAuth}) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     let postRoute = isLogin ? "login" : "signup";
-    axios.post("http://localhost:8090/" + postRoute, {
-      username: username,
-      password: password
-    }).then(() =>{
-      handleClose();
-      loginAuth();
-    }).catch(() => {
-      alert("Login unsuccessful!");
-    })
-
-    console.log(username, password);
-    axios.get(`http://localhost:8090/login?username=${username}&password=${password}`).then(res => {
-    console.log(res.data)
-    if(res.data.toString() === "true"){
-        console.log('aasd')
-        return window.open("/dashboard","_self")
+    axios.post(`http://localhost:8090/login?username=${username}&password=${password}`).then((res) =>{
+      if(res.data.toString() === "true"){
+        handleClose();
+        loginAuth();
       }else{
-        setError("Invalid Credentials")
+        alert("Login unsuccessful!");
       }
+    }).catch((err) => {
+      console.log("Error Found", err);
     })
   }
 
@@ -56,7 +47,7 @@ const Login = ({loginAuth}) => {
         <Modal.Body>
         <p>The premier source of all deal information.</p>
             <FormGroup controlId="email">
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Username</FormLabel>
               <FormControl
                 autoFocus
                 type="text"
@@ -72,8 +63,7 @@ const Login = ({loginAuth}) => {
                 type="password"
               />
             </FormGroup>
-
-          <p className={dbConnection} onClick={setDBConnection}>Database succession successful</p>
+          <CheckDbConnection />
         </Modal.Body>
         <Modal.Footer>
           {isLogin ? <Button type="submit" variant="secondary">Login</Button> : <Button type="submit" variant="primary">Sign Up</Button>}

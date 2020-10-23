@@ -19,8 +19,8 @@ def dbconnect():
 
 @app.route('/login',methods = ['GET','POST'])
 def login():
-    username = request.get_json()["username"]
-    password = request.get_json()["password"]
+    username = request.args.get('username')
+    password = request.args.get('password')
     print(username,password)
     singupUrl = f"http://localhost:8080/login?username={username}&password={password}"
     r = requests.get(singupUrl)
