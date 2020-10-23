@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Form, Button, Card } from 'react-bootstrap'
 
-const OtherData = () => {
+const AvgBuySell = () => {
 
     const [date, setDate] = useState("");
 
@@ -21,7 +21,7 @@ const OtherData = () => {
         <div>
             <Card>
             <Card.Body>
-            <h1>Other Data</h1>
+            <h1>Ending Position</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Group>
                     <Form.Label>Date</Form.Label>
@@ -41,7 +41,7 @@ const OtherData = () => {
 
 
             {/* Stuff to be displayed from form can be put here */}
-
+            
 
             </Card.Body>
             </Card>
@@ -49,4 +49,4 @@ const OtherData = () => {
     )
 }
 
-export default OtherData;
+export default AvgBuySell;
