@@ -18,23 +18,41 @@ def realised_profit():
             temp = sell_df[sell_df['counterparty_name']==counterparty]
             newSelldf = temp[temp['instrument_name']==instrument]
             newSelldf['total'] = newSelldf['deal_amount'] * newSelldf['deal_quantity']
+            avg_sell = newSelldf['total'].sum() / newSelldf['deal_quantity'].sum()
 
             temp = buy_df[buy_df['counterparty_name']==counterparty]
             newBuydf = temp[temp['instrument_name']==instrument]
             newBuydf['total'] = newBuydf['deal_amount'] * newBuydf['deal_quantity']
+            avg_buy = newBuydf['total'].sum() / newBuydf['deal_quantity'].sum()
 
-            total_sell = newSelldf['total'].sum()
-            total_buy  = newBuydf['total'].sum()
-            PnL = total_sell- total_buy
+            PnL = (avg_sell - avg_buy) * newSelldf['deal_quantity'].sum()
             pnldict[str(counterparty)] += PnL
-    #ending_position = newBuydf['deal_quantity'].sum() - newSelldf['deal_quantity'].sum()
-    #print("ending position : ")
-    #print(str(counterparty) + "-" + str(instrument) + "=" + str(ending_position))
-    #print("Realized Gains: ")
-    #print(pnldict)
+
     return pnldict
 
-print(realised_profit())
+def effective_profit():
+    sell_df = pd.read_sql("SELECT counterparty_name, instrument_name, deal_quantity, deal_amount FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id  INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S';",con=connection)
+    buy_df = pd.read_sql("SELECT counterparty_name, instrument_name, deal_amount, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='B';",con=connection)
+    counterparties = sell_df.counterparty_name.unique()
+    instruments = sell_df.instrument_name.unique()
+    pnldict = {}
+    for counterparty in counterparties:
+        pnldict[str(counterparty)] = 0
+        effective_PnL = 0
+        for instrument in instruments:
+            temp = sell_df[sell_df['counterparty_name'] == counterparty]
+            newSelldf = temp[temp['instrument_name'] == instrument]
+            newSelldf['total'] = newSelldf['deal_amount'] * newSelldf['deal_quantity']
+            avg_sell = newSelldf['total'].sum() / newSelldf['deal_quantity'].sum()
+
+            temp = buy_df[buy_df['counterparty_name'] == counterparty]
+            newBuydf = temp[temp['instrument_name'] == instrument]
+            newBuydf['total'] = newBuydf['deal_amount'] * newBuydf['deal_quantity']
+            avg_buy = newBuydf['total'].sum() / newBuydf['deal_quantity'].sum()
+
+            realized_PnL = (avg_sell - avg_buy) * newSelldf['deal_quantity'].sum()
+            pnldict[str(counterparty)] += realized_PnL + (newBuydf['deal_quantity'].sum() - newSelldf['deal_quantity'].sum()) * (newSelldf['deal_amount'].iloc[-1] - newBuydf['deal_amount'].mean())
+    return pnldict
 
 
 
