@@ -59,16 +59,13 @@ def effective_profit():
 def calculate_avg_buy_sell_price(start_date='2017-07-28T17:06:29.955', end_date='2017-07-28T17:06:30.049'):
     avg_sell_buy_dict = {}  # Dictionary where instrument name is the key, each instrument is a dictionary with buy & sell prices
     # Calculate Avg Sell Price
-    cursor.execute("SELECT instrument_name, AVG(deal_amount) FROM db_grad_cs_1917.deal "
-                   "INNER JOIN db_grad_cs_1917.instrument "
-                   "ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S' AND deal_time BETWEEN '" + start_date + "' AND '" + end_date +
-                   "' GROUP BY deal_instrument_id;")
+    query = "SELECT instrument_name, AVG(deal_amount) FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S' AND deal_time BETWEEN \'" + start_date + "\' AND \'" + end_date + "\' GROUP BY deal_instrument_id"
+    cursor.execute(query)
     for avgSellPrice in cursor:
         avg_sell_buy_dict[avgSellPrice[0]] = {"avgSellPrice": avgSellPrice[1]}
     # Calculate Average Buy Price
-    cursor.execute("SELECT instrument_name, AVG(deal_amount) FROM db_grad_cs_1917.deal "
-                   "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
-                   "WHERE deal_type='B' AND deal_time BETWEEN " + start_date + " AND " + end_date + " GROUP BY deal_instrument_id;")
+    query = "SELECT instrument_name, AVG(deal_amount) FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='B' AND deal_time BETWEEN \'" + start_date + "\' AND \'" + end_date + "\' GROUP BY deal_instrument_id"
+    cursor.execute(query)
     for avgBuyPrice in cursor:
         avg_sell_buy_dict[avgBuyPrice[0]]["avgBuyPrice"] = avgBuyPrice[1]
     return avg_sell_buy_dict
@@ -139,3 +136,5 @@ def calculate_aggregate_ending_positions():
             aggregate_ending_position_dict.get(instrument)["quantitySold"] = quantity
             aggregate_ending_position_dict.get(instrument)["endingPosition"] = q_bought - quantity
     return aggregate_ending_position_dict
+
+print(calculate_avg_buy_sell_price())
