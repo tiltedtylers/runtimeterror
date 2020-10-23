@@ -8,7 +8,7 @@ import Login from './components/profile/Login'
 
 const App = () => {
 
-  const [auth, setAuth] = useState(true);
+  const [auth, setAuth] = useState(false);
 
   // passing hook down to dashboard then login component to update authentication hook here
   const loginAuth = () => {
