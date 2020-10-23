@@ -18,23 +18,41 @@ def realised_profit():
             temp = sell_df[sell_df['counterparty_name']==counterparty]
             newSelldf = temp[temp['instrument_name']==instrument]
             newSelldf['total'] = newSelldf['deal_amount'] * newSelldf['deal_quantity']
+            avg_sell = newSelldf['total'].sum() / newSelldf['deal_quantity'].sum()
 
             temp = buy_df[buy_df['counterparty_name']==counterparty]
             newBuydf = temp[temp['instrument_name']==instrument]
             newBuydf['total'] = newBuydf['deal_amount'] * newBuydf['deal_quantity']
+            avg_buy = newBuydf['total'].sum() / newBuydf['deal_quantity'].sum()
 
-            total_sell = newSelldf['total'].sum()
-            total_buy  = newBuydf['total'].sum()
-            PnL = total_sell- total_buy
+            PnL = (avg_sell - avg_buy) * newSelldf['deal_quantity'].sum()
             pnldict[str(counterparty)] += PnL
-    #ending_position = newBuydf['deal_quantity'].sum() - newSelldf['deal_quantity'].sum()
-    #print("ending position : ")
-    #print(str(counterparty) + "-" + str(instrument) + "=" + str(ending_position))
-    #print("Realized Gains: ")
-    #print(pnldict)
+
     return pnldict
 
-print(realised_profit())
+def effective_profit():
+    sell_df = pd.read_sql("SELECT counterparty_name, instrument_name, deal_quantity, deal_amount FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id  INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S';",con=connection)
+    buy_df = pd.read_sql("SELECT counterparty_name, instrument_name, deal_amount, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='B';",con=connection)
+    counterparties = sell_df.counterparty_name.unique()
+    instruments = sell_df.instrument_name.unique()
+    pnldict = {}
+    for counterparty in counterparties:
+        pnldict[str(counterparty)] = 0
+        effective_PnL = 0
+        for instrument in instruments:
+            temp = sell_df[sell_df['counterparty_name'] == counterparty]
+            newSelldf = temp[temp['instrument_name'] == instrument]
+            newSelldf['total'] = newSelldf['deal_amount'] * newSelldf['deal_quantity']
+            avg_sell = newSelldf['total'].sum() / newSelldf['deal_quantity'].sum()
+
+            temp = buy_df[buy_df['counterparty_name'] == counterparty]
+            newBuydf = temp[temp['instrument_name'] == instrument]
+            newBuydf['total'] = newBuydf['deal_amount'] * newBuydf['deal_quantity']
+            avg_buy = newBuydf['total'].sum() / newBuydf['deal_quantity'].sum()
+
+            realized_PnL = (avg_sell - avg_buy) * newSelldf['deal_quantity'].sum()
+            pnldict[str(counterparty)] += realized_PnL + (newBuydf['deal_quantity'].sum() - newSelldf['deal_quantity'].sum()) * (newSelldf['deal_amount'].iloc[-1] - newBuydf['deal_amount'].mean())
+    return pnldict
 
 
 
@@ -53,14 +71,15 @@ def calculate_avg_buy_sell_price(start_date='2017-07-28T17:06:29.955', end_date=
                    "WHERE deal_type='B' AND deal_time BETWEEN " + start_date + " AND " + end_date + " GROUP BY deal_instrument_id;")
     for avgBuyPrice in cursor:
         avg_sell_buy_dict[avgBuyPrice[0]]["avgBuyPrice"] = avgBuyPrice[1]
+    return avg_sell_buy_dict
 
 
-def calculate_ending_position(date='2020-10-22'):
-    ending_position_dict = {}
+def calculate_ending_position():
+    ending_position_dict = {}  # Dictionary with dictionaries for each trader with dictionaries for each instrument
     cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
                    "INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id "
                    "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
-                   "WHERE deal_type='B' AND deal_time LIKE '%" + date + "%'")
+                   "WHERE deal_type='B'")
     for purchase in cursor:
         counterparty = purchase[0]
         instrument = purchase[1]
@@ -76,7 +95,7 @@ def calculate_ending_position(date='2020-10-22'):
     cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
                    "INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id "
                    "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
-                   "WHERE deal_type='S' AND deal_time LIKE '%" + date + "%'")
+                   "WHERE deal_type='S'")
     for sale in cursor:
         counterparty = sale[0]
         instrument = sale[1]
@@ -89,3 +108,34 @@ def calculate_ending_position(date='2020-10-22'):
         else:
             ending_position_dict.get(counterparty).get(instrument)["quantitySold"] = quantity
             ending_position_dict.get(counterparty).get(instrument)["endingPosition"] = q_bought - quantity
+    return ending_position_dict
+
+
+def calculate_aggregate_ending_positions():
+    aggregate_ending_position_dict = {}  # Dictionary with dictionaries for each trader with dictionaries for each instrument
+    cursor.execute("SELECT instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
+                   "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
+                   "WHERE deal_type='B'")
+    for purchase in cursor:
+        instrument = purchase[0]
+        quantity = purchase[1]
+        if instrument in aggregate_ending_position_dict:
+            q_bought = aggregate_ending_position_dict.get(instrument).get("quantityBought")
+            aggregate_ending_position_dict.get(instrument)["quantityBought"] = q_bought + quantity
+        else:
+            aggregate_ending_position_dict[instrument] = {"quantityBought": quantity}
+    cursor.execute("SELECT instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
+                   "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
+                   "WHERE deal_type='S'")
+    for sale in cursor:
+        instrument = sale[0]
+        quantity = sale[1]
+        q_bought = aggregate_ending_position_dict.get(instrument).get("quantityBought")
+        if "quantitySold" in aggregate_ending_position_dict.get(instrument):
+            q_sold = aggregate_ending_position_dict.get(instrument).get("quantitySold")
+            aggregate_ending_position_dict.get(instrument)["quantitySold"] = q_sold + quantity
+            aggregate_ending_position_dict.get(instrument)["endingPosition"] = q_bought - (q_sold + quantity)
+        else:
+            aggregate_ending_position_dict.get(instrument)["quantitySold"] = quantity
+            aggregate_ending_position_dict.get(instrument)["endingPosition"] = q_bought - quantity
+    return aggregate_ending_position_dict
