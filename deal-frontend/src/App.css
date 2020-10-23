@@ -4,6 +4,6 @@
 
 .modal-backdrop.show {
   opacity: 1 !important;
-  background-color: #fff; /* 0018a8 */
+  background-color: #fff; 
 }
 

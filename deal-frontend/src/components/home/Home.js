@@ -2,6 +2,8 @@ import React from 'react'
 import { Alert } from 'react-bootstrap';
 import Login from '../profile/Login';
 import CheckDbConnection from './CheckDBConnection'
+// import { Alert } from 'react-bootstrap';
+// import Login from '../profile/Login';
 
 
 const Home = () => {
@@ -12,6 +14,7 @@ const Home = () => {
             <Alert>
                 <CheckDbConnection />
             </Alert>
+            
         </div>
     )
 }

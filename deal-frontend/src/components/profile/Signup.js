@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel, Form } from "react-bootstrap";
 import "./login.css";
-import axios from 'axios'
+import axios from 'axios';
 
 export default function Signup({history}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null)
 
-  function validateForm() {
+  const validateForm = () => {
     return username.length > 0 && password.length > 0;
   }
 
-  function handleSubmit(event) {
+  const handleSubmit= (event) => {
     event.preventDefault();
     console.log(username, password);
     axios.get(`http://localhost:8090/login?username=${username}&password=${password}`).then(res => {
@@ -29,9 +29,9 @@ export default function Signup({history}) {
   return (
     <div className="main">
         <h1>Signup</h1>
-      <form onSubmit={handleSubmit}>
-        <FormGroup controlId="username">
-          <FormLabel>username</FormLabel>
+      <Form onSubmit={handleSubmit}>
+        <FormGroup controlId="email">
+          <FormLabel>Email</FormLabel>
           <FormControl
             autoFocus
             type="username"
@@ -50,8 +50,7 @@ export default function Signup({history}) {
         <Button block disabled={!validateForm()} type="submit">
           Signup
         </Button>
-  {error && <div>{error}</div>}
-      </form>
+      </Form>
     </div>
   );
 }
