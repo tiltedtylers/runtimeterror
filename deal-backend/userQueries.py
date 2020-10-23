@@ -5,13 +5,13 @@ connection = mysql.connector.connect(host='localhost', database='mysql', user='r
 cursor = connection.cursor()
 
 
-def calculate_avg_buy_sell_price(start_date = '2017-07-28T17:06:29.955', end_date = '2017-07-28T17:06:30.049'):
+def calculate_avg_buy_sell_price(start_date='2017-07-28T17:06:29.955', end_date='2017-07-28T17:06:30.049'):
     avg_sell_buy_dict = {}  # Dictionary where instrument name is the key, each instrument is a dictionary with buy & sell prices
     # Calculate Avg Sell Price
     cursor.execute("SELECT instrument_name, AVG(deal_amount) FROM db_grad_cs_1917.deal "
                    "INNER JOIN db_grad_cs_1917.instrument "
-                   "ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S' AND deal_time BETWEEN " + start_date + " AND " + end_date +
-                   " GROUP BY deal_instrument_id;")
+                   "ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S' AND deal_time BETWEEN '" + start_date + "' AND '" + end_date +
+                   "' GROUP BY deal_instrument_id;")
     for avgSellPrice in cursor:
         avg_sell_buy_dict[avgSellPrice[0]] = {"avgSellPrice": avgSellPrice[1]}
     # Calculate Average Buy Price
@@ -22,12 +22,12 @@ def calculate_avg_buy_sell_price(start_date = '2017-07-28T17:06:29.955', end_dat
         avg_sell_buy_dict[avgBuyPrice[0]]["avgBuyPrice"] = avgBuyPrice[1]
 
 
-def calculate_ending_position():
+def calculate_ending_position(date='2020-10-22'):
     ending_position_dict = {}
-    # cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='B' AND deal_time LIKE '%2017-07-28%'")
-    cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty "
-                   "ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument "
-                   "ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='B'")
+    cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
+                   "INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id "
+                   "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
+                   "WHERE deal_type='B' AND deal_time LIKE '%" + date + "%'")
     for purchase in cursor:
         counterparty = purchase[0]
         instrument = purchase[1]
@@ -40,10 +40,10 @@ def calculate_ending_position():
                 ending_position_dict.get(counterparty)[instrument] = {"quantityBought": quantity}
         else:
             ending_position_dict[counterparty] = {instrument: {"quantityBought": quantity}}
-    # cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S' AND deal_time LIKE '%2017-07-28%'")
-    cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal INNER JOIN db_grad_cs_1917.counterparty "
-                   "ON deal.deal_counterparty_id=counterparty.counterparty_id INNER JOIN db_grad_cs_1917.instrument "
-                   "ON deal.deal_instrument_id=instrument.instrument_id WHERE deal_type='S'")
+    cursor.execute("SELECT counterparty_name, instrument_name, deal_quantity FROM db_grad_cs_1917.deal "
+                   "INNER JOIN db_grad_cs_1917.counterparty ON deal.deal_counterparty_id=counterparty.counterparty_id "
+                   "INNER JOIN db_grad_cs_1917.instrument ON deal.deal_instrument_id=instrument.instrument_id "
+                   "WHERE deal_type='S' AND deal_time LIKE '%" + date + "%'")
     for sale in cursor:
         counterparty = sale[0]
         instrument = sale[1]
